@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>刘亿照 | 网络工程 · Web 安全 · 逆向分析</title>
+<meta name="description" content="刘亿照，河南开封科技传媒学院网络工程在读。主攻 Web 安全、渗透测试与 JavaScript 逆向，擅长反调试绕过、接口签名分析、自动化脚本与爬虫开发。">
+<meta name="author" content="刘亿照">
+<meta property="og:type" content="website">
+<meta property="og:title" content="刘亿照 | 网络工程 · Web 安全 · 逆向分析">
+<meta property="og:description" content="逆向项目、安全复盘与工具源码收录，期待和同好交流。">
+<meta property="og:url" content="https://kc-liuyizhao.tech">
+<!-- 后续可以添加 favicon -->
+<!-- <link rel="icon" type="image/svg+xml" href="/favicon.svg"> -->
+<script>document.documentElement.classList.add('js');</script>
+<style>
+  :root{
+    --bg:#080b10;
+    --card:#111820;
+    --line:rgba(255,255,255,.08);
+    --text:#e8eef6;
+    --muted:#8a99ab;
+    --accent:#00e5a0;
+    --accent-2:#3d8bff;
+    --radius:14px;
+    --max:1080px;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    color:var(--text);
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+    background-color:var(--bg);
+    background-image:
+      radial-gradient(900px 520px at 82% -12%, rgba(0,229,160,.10), transparent 62%),
+      radial-gradient(760px 520px at -5% 8%, rgba(61,139,255,.10), transparent 62%),
+      linear-gradient(rgba(255,255,255,.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.022) 1px, transparent 1px);
+    background-size:auto, auto, 48px 48px, 48px 48px;
+    background-attachment:fixed;
+  }
+  a{color:inherit;}
+  ::selection{background:rgba(0,229,160,.28);color:#fff;}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px;}
+  .container{max-width:var(--max);margin:0 auto;padding:0 24px;}
+  /* ---------- 导航 ---------- */
+  .nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(8,11,16,.72);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    max-width:var(--max);margin:0 auto;padding:14px 24px;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+  }
+  .logo{
+    font-family:var(--mono);font-size:1rem;font-weight:700;
+    text-decoration:none;letter-spacing:.02em;white-space:nowrap;
+  }
+  .logo span{color:var(--accent);}
+  .nav-links{display:flex;gap:22px;list-style:none;margin:0;padding:0;}
+  .nav-links a{
+    text-decoration:none;font-size:.9rem;color:var(--muted);
+    transition:color .2s;position:relative;
+  }
+  .nav-links a:hover{color:var(--accent);}
+  /* ---------- Hero ---------- */
+  .hero{padding:clamp(48px,8vw,104px) 0 clamp(44px,7vw,88px);}
+  .hero-grid{
+    display:grid;grid-template-columns:1.12fr .88fr;
+    gap:52px;align-items:center;
+  }
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:9px;
+    font-family:var(--mono);font-size:.78rem;letter-spacing:.06em;
+    color:var(--muted);margin:0 0 18px;
+    border:1px solid var(--line);border-radius:999px;
+    padding:6px 14px;background:rgba(255,255,255,.02);
+  }
+  .dot{
+    width:7px;height:7px;border-radius:50%;background:var(--accent);
+    box-shadow:0 0 0 3px rgba(0,229,160,.18);
+    animation:pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{box-shadow:0 0 0 3px rgba(0,229,160,.18);}
+    50%{box-shadow:0 0 0 7px rgba(0,229,160,.05);}
+  }
+  h1{
+    font-size:clamp(2.6rem,7vw,4.1rem);
+    line-height:1.08;letter-spacing:-.02em;margin:0 0 14px;
+    background:linear-gradient(180deg,#ffffff 30%,#9fb3c8 100%);
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .typed-line{
+    font-family:var(--mono);font-size:clamp(.9rem,2.2vw,1.02rem);
+    color:var(--muted);margin:0 0 22px;
+  }
+  .typed{color:var(--accent);font-weight:600;}
+  .typed::after{
+    content:"▍";margin-left:2px;color:var(--accent);
+    animation:blink 1.05s steps(1) infinite;
+  }
+  @keyframes blink{50%{opacity:0;}}
+  .lead{max-width:58ch;margin:0;color:var(--muted);font-size:1rem;}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px;}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:12px 24px;border-radius:999px;
+    font-size:.92rem;font-weight:600;text-decoration:none;
+    border:1px solid transparent;transition:transform .2s,background .2s,border-color .2s,color .2s;
+  }
+  .btn-primary{
+    background:linear-gradient(135deg,var(--accent),#00b47e);
+    color:#04120c;
+    box-shadow:0 10px 28px -12px rgba(0,229,160,.75);
+  }
+  .btn-primary:hover{transform:translateY(-2px);}
+  .btn-ghost{
+    border-color:var(--line);color:var(--text);
+    background:rgba(255,255,255,.03);
+  }
+  .btn-ghost:hover{border-color:rgba(0,229,160,.5);color:var(--accent);}
+  /* ---------- 终端卡片 ---------- */
+  .terminal{
+    background:rgba(13,18,25,.88);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+    box-shadow:0 40px 70px -34px rgba(0,0,0,.95);
+    transform:rotate(.4deg);
+  }
+  .terminal-bar{
+    display:flex;align-items:center;gap:7px;
+    padding:10px 14px;
+    background:rgba(255,255,255,.03);
+    border-bottom:1px solid var(--line);
+  }
+  .terminal-bar i{width:10px;height:10px;border-radius:50%;background:#ff5f57;display:block;}
+  .terminal-bar i:nth-child(2){background:#febc2e;}
+  .terminal-bar i:nth-child(3){background:#28c840;}
+  .terminal-bar em{
+    margin-left:8px;font-style:normal;
+    font-family:var(--mono);font-size:.72rem;color:var(--muted);
+  }
+  .terminal-body{
+    margin:0;padding:18px 18px 22px;
+    font-family:var(--mono);font-size:.83rem;line-height:1.95;
+    color:#c7d5e3;white-space:pre-wrap;word-break:break-word;
+    overflow-x:auto;
+  }
+  .terminal-body .p{color:var(--accent);}
+  /* ---------- 通用 section ---------- */
+  .section{padding:clamp(46px,7vw,84px) 0;}
+  .section-title{
+    display:flex;align-items:baseline;gap:14px;
+    font-size:clamp(1.32rem,3vw,1.78rem);
+    margin:0 0 30px;letter-spacing:.01em;
+  }
+  .section-title span{
+    font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;
+    color:var(--accent);font-weight:600;
+  }
+  /* ---------- 关于 ---------- */
+  .about-text{
+    max-width:72ch;margin:0 0 16px;
+    font-size:1.02rem;color:#c2cedd;
+  }
+  .about-text strong{color:#fff;font-weight:600;}
+  .facts{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+    gap:14px;margin:28px 0 0;padding:0;
+  }
+  .fact{
+    background:rgba(255,255,255,.03);
+    border:1px solid var(--line);
+    border-radius:12px;padding:16px 18px;margin:0;
+  }
+  .fact dt{
+    font-family:var(--mono);font-size:.72rem;
+    letter-spacing:.1em;color:var(--muted);
+  }
+  .fact dd{margin:7px 0 0;font-size:.97rem;font-weight:600;}
+  /* ---------- 卡片网格 ---------- */
+  .cards{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));
+    gap:18px;
+  }
+  .card-link{
+    text-decoration:none;
+    display:block;
+  }
+  .card{
+    position:relative;
+    background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.014));
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:26px 24px;
+    transition:transform .25s,border-color .25s,box-shadow .25s;
+  }
+  .card:hover{
+    transform:translateY(-4px);
+    border-color:rgba(0,229,160,.35);
+    box-shadow:0 24px 44px -30px rgba(0,229,160,.6);
+  }
+  .card-icon{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:40px;height:40px;border-radius:10px;
+    font-family:var(--mono);font-size:.82rem;font-weight:700;
+    color:var(--accent);
+    background:rgba(0,229,160,.10);
+    border:1px solid rgba(0,229,160,.22);
+    margin-bottom:16px;
+  }
+  .card h3{margin:0 0 10px;font-size:1.04rem;letter-spacing:.01em;}
+  .card p{margin:0;color:var(--muted);font-size:.9rem;line-height:1.78;}
+  /* ---------- 标签 ---------- */
+  .tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px;}
+  .tag{
+    font-family:var(--mono);font-size:.78rem;
+    padding:7px 14px;border-radius:999px;
+    border:1px solid var(--line);
+    color:var(--muted);
+    background:rgba(255,255,255,.02);
+    transition:border-color .2s,color .2s,background .2s;
+  }
+  .tag:hover{
+    border-color:rgba(0,229,160,.45);
+    color:var(--accent);
+    background:rgba(0,229,160,.06);
+  }
+  /* ---------- 联系 ---------- */
+  .contact-card{
+    text-align:center;
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:clamp(34px,6vw,66px) 24px;
+    background:
+      radial-gradient(620px 220px at 50% 0%, rgba(0,229,160,.11), transparent 72%),
+      rgba(255,255,255,.02);
+  }
+  .contact-card h2{margin:0 0 14px;font-size:clamp(1.4rem,3.6vw,2rem);letter-spacing:-.01em;}
+  .contact-card p{margin:0 auto;max-width:54ch;color:var(--muted);}
+  .contact-card .hero-actions{justify-content:center;}
+  /* ---------- 页脚 ---------- */
+  .footer{border-top:1px solid var(--line);padding:26px 0 34px;}
+  .footer-inner{
+    display:flex;flex-wrap:wrap;gap:10px;
+    align-items:center;justify-content:space-between;
+    font-size:.82rem;color:var(--muted);
+  }
+  .footer-inner p{margin:0;}
+  .footer .mono{font-family:var(--mono);letter-spacing:.04em;}
+  /* ---------- 入场动画 ---------- */
+  .js .reveal{opacity:0;transform:translateY(18px);}
+  .reveal{
+    transition:opacity .65s cubic-bezier(.22,.7,.3,1),transform .65s cubic-bezier(.22,.7,.3,1);
+  }
+  .reveal.is-visible{opacity:1;transform:none;}
+  /* ---------- 响应式 ---------- */
+  @media (max-width:900px){
+    .hero-grid{grid-template-columns:1fr;gap:38px;}
+    .terminal{transform:none;}
+  }
+  @media (max-width:640px){
+    .nav-inner{padding:12px 18px;}
+    .nav-links{gap:16px;}
+    .nav-links a{font-size:.82rem;}
+    .container{padding:0 18px;}
+    .facts{grid-template-columns:1fr 1fr;}
+    .footer-inner{flex-direction:column;align-items:flex-start;}
+  }
+  @media (max-width:400px){
+    .nav-links{gap:12px;}
+    .nav-links a{font-size:.78rem;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none !important;transition:none !important;}
+    .js .reveal{opacity:1;transform:none;}
+  }
+</style>
+</head>
+<body>
+<!-- ============ 导航 ============ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="logo" href="#top">刘亿照<span>.sec</span></a>
+    <ul class="nav-links">
+      <li><a href="#about">关于</a></li>
+      <li><a href="#skills">擅长</a></li>
+      <li><a href="#works">作品</a></li>
+      <li><a href="#contact">联系</a></li>
+    </ul>
+  </div>
+</nav>
+<!-- ============ Hero ============ -->
+<header id="top" class="hero">
+  <div class="container hero-grid">
+    <div>
+      <p class="eyebrow"><span class="dot"></span>河南开封科技传媒学院 · 网络工程</p>
+      <h1>刘亿照</h1>
+      <p class="typed-line">主攻方向：<span class="typed" id="typed"></span></p>
+      <p class="lead">
+        网络工程在读，专注 Web 安全、渗透测试与 JavaScript 逆向实践。
+        擅长反调试绕过、接口签名分析、自动化脚本与爬虫开发，参与 CTF 攻防练习。
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#works">查看收录内容</a>
+        <a class="btn btn-ghost" href="#contact">联系我</a>
+      </div>
+    </div>
+    <div class="terminal" aria-hidden="true">
+      <div class="terminal-bar"><i></i><i></i><i></i><em>zsh — liuyizhao</em></div>
+<pre class="terminal-body"><span class="p">$</span> whoami
+刘亿照
+<span class="p">$</span> cat school.txt
+河南开封科技传媒学院 · 网络工程
+<span class="p">$</span> ls ./focus
+渗透测试  Web安全  逆向分析  爬虫开发
+<span class="p">$</span> cat stack.txt
+逆向分析 / 自动化脚本 / 接口签名
+<span class="p">$</span> ./start.sh --ctf --learn
+<span class="p">[ok]</span> ready to learn & build...</pre>
+    </div>
+  </div>
+</header>
+<main>
+  <!-- ============ 01 关于我 ============ -->
+  <section id="about" class="section">
+    <div class="container">
+      <h2 class="section-title reveal"><span>01</span>关于我</h2>
+      <p class="about-text reveal">
+        我习惯从抓包与调试入手，拆解网站前端防护逻辑，研究混淆 JavaScript、加密接口签名。日常练习 Web 漏洞验证与 CTF 攻防，会把分析过程整理成笔记、文档和可运行代码。
+      </p>
+      <p class="about-text reveal">
+        本作品集用来存放我的逆向项目、安全复盘以及自研工具源码，记录个人技术成长，欢迎同好交流探讨。
+      </p>
+      <dl class="facts reveal">
+        <div class="fact">
+          <dt>NAME</dt>
+          <dd>刘亿照</dd>
+        </div>
+        <div class="fact">
+          <dt>SCHOOL</dt>
+          <dd>河南开封科技传媒学院</dd>
+        </div>
+        <div class="fact">
+          <dt>MAJOR</dt>
+          <dd>网络工程</dd>
+        </div>
+        <div class="fact">
+          <dt>STATUS</dt>
+          <dd>持续学习中 · 开放交流</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+  <!-- ============ 02 擅长领域 ============ -->
+  <section id="skills" class="section">
+    <div class="container">
+      <h2 class="section-title reveal"><span>02</span>擅长领域</h2>
+      <div class="cards">
+        <article class="card reveal">
+          <div class="card-icon">&lt;/&gt;</div>
+          <h3>逆向分析</h3>
+          <p>JavaScript 逆向与混淆代码还原，反调试绕过、环境检测对抗，接口签名算法分析与复现。</p>
+        </article>
+        <article class="card reveal">
+          <div class="card-icon">WAF</div>
+          <h3>Web 渗透</h3>
+          <p>常见 Web 漏洞的挖掘与验证，信息收集、攻击面梳理，渗透测试流程执行与报告整理。</p>
+        </article>
+        <article class="card reveal">
+          <div class="card-icon">&gt;_</div>
+          <h3>自动化脚本</h3>
+          <p>使用 Python / Node.js 编写爬虫与自动化工具，实现批量采集、数据处理与流程自动化。</p>
+        </article>
+      </div>
+      <div class="tags reveal">
+        <span class="tag">渗透测试</span>
+        <span class="tag">Web 安全</span>
+        <span class="tag">JS 逆向</span>
+        <span class="tag">反调试绕过</span>
+        <span class="tag">接口签名分析</span>
+        <span class="tag">爬虫开发</span>
+        <span class="tag">自动化脚本</span>
+        <span class="tag">CTF 攻防</span>
+      </div>
+    </div>
+  </section>
+  <!-- ============ 03 作品收录 ============ -->
+  <section id="works" class="section">
+    <div class="container">
+      <h2 class="section-title reveal"><span>03</span>作品收录</h2>
+      <div class="cards">
+        <!-- 卡片用 a.card-link，href为预留锚点，后续替换为子页面真实地址 -->
+        <a class="card-link reveal" href="#work-reverse">
+          <article class="card">
+            <div class="card-icon">01</div>
+            <h3>逆向项目</h3>
+            <p>JS 反混淆、反调试绕过与接口签名还原的实践记录，包含分析思路与关键代码片段。</p>
+          </article>
+        </a>
+        <a class="card-link reveal" href="#work-review">
+          <article class="card">
+            <div class="card-icon">02</div>
+            <h3>安全复盘</h3>
+            <p>漏洞挖掘过程、渗透测试笔记与 CTF 题目复盘，记录从信息收集到验证的完整链路。</p>
+          </article>
+        </a>
+        <a class="card-link reveal" href="#work-tools">
+          <article class="card">
+            <div class="card-icon">03</div>
+            <h3>工具源码</h3>
+            <p>自写的爬虫、自动化脚本与安全工具源码，注重实用性与可复用性。</p>
+          </article>
+        </a>
+      </div>
+    </div>
+  </section>
+  <!-- ============ 04 联系 ============ -->
+  <section id="contact" class="section">
+    <div class="container">
+      <div class="contact-card reveal">
+        <h2>期待和同好交流</h2>
+        <p>无论是逆向项目、安全复盘还是工具源码，都欢迎一起探讨。</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="mailto:abcd18338376325@qq.com">发送邮件</a>
+          <a class="btn btn-ghost" href="https://github.com/YoFuTong" target="_blank" rel="noopener noreferrer">GitHub</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<!-- ============ 页脚 ============ -->
+<footer class="footer">
+  <div class="container footer-inner">
+    <p>© <span id="year">2026</span> 刘亿照 · 网络工程 / 安全研究</p>
+    <p class="mono">kc-liuyizhao.tech</p>
+  </div>
+</footer>
+<script>
+(function () {
+  'use strict';
+  /* ---------- 1. 打字机效果 ---------- */
+  var phrases = ['Web 安全', '渗透测试', 'JavaScript 逆向', '自动化脚本 / 爬虫'];
+  var typedEl = document.getElementById('typed');
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (typedEl) {
+    if (reduceMotion) {
+      typedEl.textContent = phrases[0];
+    } else {
+      var pi = 0, ci = 0, deleting = false;
+      var tick = function () {
+        var current = phrases[pi];
+        if (!deleting) {
+          ci++;
+          typedEl.textContent = current.slice(0, ci);
+          if (ci === current.length) {
+            deleting = true;
+            setTimeout(tick, 1600);
+            return;
+          }
+          setTimeout(tick, 110);
+        } else {
+          ci--;
+          typedEl.textContent = current.slice(0, ci);
+          if (ci === 0) {
+            deleting = false;
+            pi = (pi + 1) % phrases.length;
+            setTimeout(tick, 320);
+            return;
+          }
+          setTimeout(tick, 55);
+        }
+      };
+      setTimeout(tick, 500);
+    }
+  }
+  /* ---------- 2. 滚动入场动画 ---------- */
+  var revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window && !reduceMotion) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach(function (el, i) {
+      el.style.transitionDelay = (i % 4) * 70 + 'ms';
+      io.observe(el);
+    });
+  } else {
+    revealEls.forEach(function (el) { el.classList.add('is-visible'); });
+  }
+  /* ---------- 3. 年份 ---------- */
+  var yearEl = document.getElementById('year');
+  if (yearEl) { yearEl.textContent = new Date().getFullYear(); }
+})();
+</script>
+</body>
+</html>
