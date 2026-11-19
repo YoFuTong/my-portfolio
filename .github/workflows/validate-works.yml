@@ -1,0 +1,25 @@
+name: Validate Works Data
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'works/data/works.json'
+      - 'works/detail/**'
+      - 'scripts/validate-works.js'
+      - '.github/workflows/validate-works.yml'
+  pull_request:
+    paths:
+      - 'works/data/works.json'
+      - 'works/detail/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Validate works.json
+        run: node scripts/validate-works.js
