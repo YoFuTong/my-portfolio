@@ -60,22 +60,28 @@
     })
     .then(function (r) { if (!r.ok) throw new Error('正文加载失败 HTTP ' + r.status); return r.text(); })
     .then(function (md) {
-      /* 配置 marked：代码块交给 highlight.js，图片路径做基准修正 */
+      /* --- 修改点开始 --- */
+      
+      // 去掉废弃的 highlight 选项，只保留基本解析
       marked.setOptions({
         gfm: true,
-        breaks: false,
-        highlight: function (code, lang) {
-          if (window.hljs && lang && hljs.getLanguage(lang)) {
-            try { return hljs.highlight(code, { language: lang }).value; } catch (e) {}
-          }
-          return window.hljs ? hljs.highlightAuto(code).value : code;
-        }
+        breaks: false
       });
 
+      // 将 md 转为 html
       bodyEl.innerHTML = marked.parse(md);
 
-      /* 图片相对路径修正：md 在 posts/ 下，图在 posts/images/，
-         md 里写 images/xxx.png，渲染后转成 posts/images/xxx.png */
+      // 手动扫描所有 pre code 块，应用 highlight.js 高亮
+      if (window.hljs) {
+        bodyEl.querySelectorAll('pre code').forEach(function(block) {
+          hljs.highlightElement(block);
+        });
+      }
+
+      /* --- 修改点结束 --- */
+
+      /* 图片相对路径修正：md 在 posts/ 下，图在 posts/assets/xxx/ 下，
+         md 里写 ./assets/xxx.png，渲染后转成 posts/assets/xxx.png */
       bodyEl.querySelectorAll('img').forEach(function (img) {
         var src = img.getAttribute('src');
         if (src && !/^(https?:)?\/\//.test(src) && !src.startsWith('/')) {
