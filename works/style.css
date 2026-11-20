@@ -221,3 +221,59 @@ a{color:inherit;}
 @keyframes dots{
   0%{content:"";}25%{content:".";}50%{content:"..";}75%{content:"...";}
 }
+
+/* ---------- 详情页 ---------- */
+.post-wrap{padding:clamp(32px,5vw,56px) 0 clamp(46px,7vw,84px);}
+.post-head{padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:34px;}
+.post-meta{
+  display:flex;flex-wrap:wrap;align-items:center;gap:16px;
+  font-family:var(--mono);font-size:.8rem;color:var(--muted);
+}
+.post-body{
+  max-width:76ch;font-size:1rem;line-height:1.85;color:#c8d4e2;
+}
+.post-body h1,.post-body h2,.post-body h3,.post-body h4{
+  color:#fff;line-height:1.3;letter-spacing:-.01em;margin:2em 0 .8em;
+}
+.post-body h1{font-size:1.7rem;}
+.post-body h2{font-size:1.4rem;padding-bottom:.4em;border-bottom:1px solid var(--line);}
+.post-body h3{font-size:1.18rem;}
+.post-body p{margin:0 0 1.1em;}
+.post-body a{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(0,229,160,.3);}
+.post-body a:hover{border-bottom-color:var(--accent);}
+.post-body ul,.post-body ol{padding-left:1.4em;margin:0 0 1.1em;}
+.post-body li{margin:.35em 0;}
+.post-body blockquote{
+  margin:1.4em 0;padding:.6em 1.1em;
+  border-left:3px solid var(--accent);
+  background:rgba(0,229,160,.05);border-radius:0 8px 8px 0;
+  color:var(--muted);
+}
+.post-body img{max-width:100%;height:auto;border-radius:10px;border:1px solid var(--line);margin:1.2em 0;}
+.post-body hr{border:0;border-top:1px solid var(--line);margin:2em 0;}
+.post-body table{
+  width:100%;border-collapse:collapse;margin:1.4em 0;font-size:.9rem;
+}
+.post-body th,.post-body td{
+  border:1px solid var(--line);padding:8px 12px;text-align:left;
+}
+.post-body th{background:rgba(255,255,255,.03);color:#fff;}
+
+/* 行内代码 */
+.post-body code{
+  font-family:var(--mono);font-size:.86em;
+  background:rgba(255,255,255,.06);
+  padding:.15em .4em;border-radius:5px;
+  color:#9be7c8;
+}
+
+/* 代码块 */
+.post-body pre{
+  margin:1.4em 0;padding:16px 18px;overflow-x:auto;
+  background:#0d1219;border:1px solid var(--line);border-radius:12px;
+  font-family:var(--mono);font-size:.84rem;line-height:1.7;
+}
+.post-body pre code{
+  background:none;padding:0;border-radius:0;color:#c7d5e3;font-size:inherit;
+}
+.post-foot{margin-top:44px;padding-top:26px;border-top:1px solid var(--line);}

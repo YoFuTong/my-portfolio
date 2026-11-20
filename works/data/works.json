@@ -82,5 +82,16 @@
       "href": "detail/tools-batch.html",
       "draft": true
     }
+    {
+      "id": "reverse-wyy",
+      "category": "reverse",
+      "title": "网易云音乐搜索接口逆向",
+      "desc": "抓包分析网易云 weapi 加密参数，XHR 断点定位，复现 AES 双重加密与 RSA 非标准逻辑。",
+      "tags": ["JS 逆向", "AES", "RSA", "网易云"],
+      "date": "2026-11-20",
+      "href": "detail.html?post=reverse-wyy",
+      "post": "posts/writeup_wyy.md",
+      "draft": false
+    }
   ]
 }
