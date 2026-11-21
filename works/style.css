@@ -277,3 +277,118 @@ a{color:inherit;}
   background:none;padding:0;border-radius:0;color:#c7d5e3;font-size:inherit;
 }
 .post-foot{margin-top:44px;padding-top:26px;border-top:1px solid var(--line);}
+
+/* ---------- 代码块增强：复制与折叠 ---------- */
+.code-wrapper {
+  position: relative;
+  margin: 1.4em 0;
+  border-radius: 12px;
+  background: #0d1219;
+  border: 1px solid var(--line);
+  overflow: hidden; /* 保证圆角和遮罩正常显示 */
+}
+
+/* 覆盖之前的 pre 样式，防止双重边框和边距 */
+.code-wrapper pre {
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  max-height: 400px; /* 默认折叠高度 */
+  overflow-y: hidden; /* 折叠时隐藏滚动条 */
+  transition: max-height 0.3s ease;
+}
+
+/* 折叠状态下的底部渐变遮罩 */
+.code-wrapper.is-collapsed::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to top, #0d1219 20%, transparent 100%);
+  pointer-events: none; /* 让点击穿透遮罩 */
+  z-index: 1;
+}
+
+/* 展开状态 */
+.code-wrapper.is-expanded pre {
+  max-height: none;
+  overflow-x: auto;
+  overflow-y: visible;
+}
+
+/* ---------- 工具栏（包含复制按钮） ---------- */
+.code-toolbar {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 10;
+  display: flex;
+  gap: 8px;
+}
+
+.code-btn {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.code-btn:hover {
+  background: rgba(0, 229, 160, 0.15);
+  color: var(--accent);
+  border-color: rgba(0, 229, 160, 0.3);
+}
+
+.code-btn.copied {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ---------- 展开/折叠按钮容器 ---------- */
+.code-expand-wrapper {
+  position: absolute;
+  bottom: 12px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 2;
+  display: none; /* 默认隐藏，JS 根据高度决定是否显示 */
+}
+
+.code-wrapper.is-collapsed .code-expand-wrapper {
+  display: block;
+}
+
+.expand-btn {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 6px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.expand-btn:hover {
+  background: rgba(0, 229, 160, 0.2);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* 移动端适配 */
+@media (max-width: 640px) {
+  .code-wrapper pre { max-height: 300px; }
+}
