@@ -3,7 +3,6 @@ const fs = require('fs');
 const path = require('path');
 
 const DATA_FILE = path.join('works', 'data', 'works.json');
-const DETAIL_DIR = path.join('works', 'detail');
 
 function fail(msg) {
   console.error('❌ ' + msg);
@@ -33,7 +32,7 @@ for (const [i, e] of data.entries.entries()) {
     }
   }
   if (!VALID_CATS.includes(e.category)) {
-    fail(`${pos} category 非法：${e.category}（允许：${VALID_CATS.join(', ')}）`);
+    fail(`${pos} category 非法：${e.category}`);
   }
   if (ids.has(e.id)) {
     fail(`${pos} id 重复：${e.id}`);
@@ -44,36 +43,13 @@ for (const [i, e] of data.entries.entries()) {
     fail(`${pos} tags 必须是数组`);
   }
 
-  // draft 为 false 时，检查详情页文件是否存在
-    // draft 为 false 时，检查 post 对应的 Markdown 文件是否存在
-    // draft 为 false 时，检查 post 对应的 Markdown 文件是否存在
+  // 终极排错逻辑：强制打印出它到底在找哪个文件
   if (e.draft === false && e.post) {
-    // 因为 works.json 在 works/data/ 下，里面的相对路径是相对 works/ 目录的
-    // 而脚本运行在仓库根目录，所以要加上 'works' 前缀
-    const postFile = path.join(process.cwd(), 'works', e.post);
-    if (!fs.existsSync(postFile)) {
-      fail(`${pos} draft 为 false 但 Markdown 文件不存在：${e.post}`);
+    const absPath = path.resolve(process.cwd(), 'works', e.post);
+    if (!fs.existsSync(absPath)) {
+      fail(`${pos} draft 为 false 但 Markdown 文件不存在。\n期望文件绝对路径: ${absPath}\n请检查文件是否真的推到了这个位置！`);
     }
   }
 }
-const byCat = {};
-data.entries.forEach(e => { byCat[e.category] = (byCat[e.category] || 0) + 1; });
-const drafts = data.entries.filter(e => e.draft !== false).length;
 
 console.log('✅ 校验通过');
-console.log('   总数：' + data.entries.length);
-console.log('   整理中：' + drafts);
-console.log('   分类：' + JSON.stringify(byCat));
-
-// 写入 Actions Summary
-if (process.env.GITHUB_STEP_SUMMARY) {
-  const lines = [
-    '### 作品数据校验',
-    '',
-    '- ✅ 校验通过',
-    `- 总数：${data.entries.length}`,
-    `- 整理中：${drafts}`,
-    `- 分类：${Object.entries(byCat).map(([k, v]) => `${k}(${v})`).join(' / ')}`,
-  ];
-  fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines.join('\n') + '\n');
-}
