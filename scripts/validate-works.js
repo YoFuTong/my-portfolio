@@ -46,9 +46,11 @@ for (const [i, e] of data.entries.entries()) {
 
   // draft 为 false 时，检查详情页文件是否存在
     // draft 为 false 时，检查 post 对应的 Markdown 文件是否存在
+    // draft 为 false 时，检查 post 对应的 Markdown 文件是否存在
   if (e.draft === false && e.post) {
-    // process.cwd() 是当前项目根目录
-    const postFile = path.join(process.cwd(), e.post);
+    // 因为 works.json 在 works/data/ 下，里面的相对路径是相对 works/ 目录的
+    // 而脚本运行在仓库根目录，所以要加上 'works' 前缀
+    const postFile = path.join(process.cwd(), 'works', e.post);
     if (!fs.existsSync(postFile)) {
       fail(`${pos} draft 为 false 但 Markdown 文件不存在：${e.post}`);
     }
