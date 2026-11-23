@@ -45,14 +45,15 @@ for (const [i, e] of data.entries.entries()) {
   }
 
   // draft 为 false 时，检查详情页文件是否存在
-  if (e.draft === false) {
-    const f = path.join(DETAIL_DIR, path.basename(e.href));
-    if (!fs.existsSync(f)) {
-      fail(`${pos} draft 为 false 但详情页不存在：${f}`);
+    // draft 为 false 时，检查 post 对应的 Markdown 文件是否存在
+  if (e.draft === false && e.post) {
+    // process.cwd() 是当前项目根目录
+    const postFile = path.join(process.cwd(), e.post);
+    if (!fs.existsSync(postFile)) {
+      fail(`${pos} draft 为 false 但 Markdown 文件不存在：${e.post}`);
     }
   }
 }
-
 const byCat = {};
 data.entries.forEach(e => { byCat[e.category] = (byCat[e.category] || 0) + 1; });
 const drafts = data.entries.filter(e => e.draft !== false).length;
