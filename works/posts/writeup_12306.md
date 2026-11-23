@@ -618,6 +618,12 @@ if __name__ == "__main__":
     print("encrypt_ecb base64:", result)
 ```
 
+运行一下，看输出与标准向量对比。
+
+![](./asssts1/writeup_12306/writeup_12306-1795442805058.png)
+
+结果与标准向量输出吻合，复现应该是没有问题。
+
 总结一下，这套前端js源码实现的就是SM4-ECB 加密。下面是用python的gmssl库复现这个js。
 
 ```python
@@ -667,6 +673,11 @@ if __name__ == "__main__":
     result = encrypt_ecb_gmssl("12345678", "tiekeyuankp12306", "base64")
     print("encrypt_ecb base64:", result)
 ```
+
+![](./asssts1/writeup_12306/writeup_12306-1795443064107.png)
+
+输出余标准向量吻合。
+
 
 ## 4 python完整会话构建。
 
@@ -798,7 +809,8 @@ def main():
 main()
 ```
 
+运行代码，结果输出
 
+![](./asssts1/writeup_12306/writeup_12306-1795442642475.png)
 
-
-
+看到结果，响应没有问题。
