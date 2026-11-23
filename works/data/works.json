@@ -12,14 +12,15 @@
       "draft": true
     },
     {
-      "id": "reverse-signature",
+      "id": "reverse-12306-login",
       "category": "reverse",
-      "title": "接口签名参数还原与反调试绕过",
-      "desc": "定位前端加密入口，还原签名算法与时间戳校验，处理 debugger 与环境检测。",
-      "tags": ["接口签名", "反调试", "加密分析"],
-      "href": "detail/reverse-signature.html",
-      "post": "",
-      "draft": true
+      "title": "12306 登录接口逆向与 SM4 加密分析",
+      "desc": "针对 12306 多步链式授权登录的逆向分析，纯手写复现国密 SM4 算法，并结合 curl_cffi 绕过 TLS 指纹校验。",
+      "tags": ["JS逆向", "SM4", "TLS指纹", "curl_cffi", "多步授权"],
+      "date": "2026-11-23",
+      "href": "detail.html?post=reverse-12306-login",
+      "post": "posts/writeup_12306.md",
+      "draft": false
     },
     {
       "id": "reverse-font",
