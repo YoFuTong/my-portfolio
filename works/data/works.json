@@ -63,14 +63,15 @@
       "draft": true
     },
     {
-      "id": "tools-spider",
+      "id": "tools-pyreptile",
       "category": "tools",
-      "title": "异步爬虫框架",
-      "desc": "基于 asyncio 的并发采集框架，支持限速、重试与结果落库。",
-      "tags": ["Python", "爬虫", "asyncio"],
-      "href": "detail/tools-spider.html",
-      "post": "",
-      "draft": true
+      "title": "异步分布式爬虫框架 pyReptile",
+      "desc": "基于 asyncio 与 aiohttp 手写的高并发爬虫框架。采用 Redis Pipeline 实现批量去重，支持请求指纹级排重与异步上下文管理。",
+      "tags": ["Python", "Asyncio", "Aiohttp", "Redis", "框架开发"],
+      "date": "2026-11-27",
+      "href": "detail.html?post=tools-pyreptile",
+      "post": "posts/works_pyReptile.md",
+      "draft": false
     },
     {
       "id": "tools-antidebug",
